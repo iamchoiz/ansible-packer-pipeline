@@ -1,0 +1,19 @@
+- name: Amazon Linux based Tomat8.5 & JAVA8 AMI
+  hosts: all
+  vars:
+    root_dir: /ap-service
+    sub_dir: ["logs", "conf", "app"]
+    middleware: ["tomcat"]
+  pre_tasks:
+    - name: Create Base Directory
+      file:
+        path: "{{ root_dir }}/{{ item[0] }}/{{ item[1] }}"
+        state: directory
+      with_nested:
+        - "{{ sub_dir }}"
+        - "{{ middleware }}"
+      become: yes
+  roles:
+   - jdk8
+   - tomcat8.5
+   - common

@@ -1,0 +1,12 @@
+    - name: Copy Nginx1.18 Install file
+      copy: 
+        src: ../../../sh/nginx1.18_install.sh
+        dest: /tmp/nginx1.18_install.sh
+        mode: 0744
+    - name: Nginx1.18 Install
+      command: sh /tmp/nginx1.18_install.sh  
+    - name: Copy Nginx1.18 configuration file
+      copy: 
+        src: ../nginx-conf/nginx.conf
+        dest: /ap-service/conf/nginx/nginx.conf
+      become: yes

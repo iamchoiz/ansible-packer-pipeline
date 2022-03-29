@@ -1,0 +1,52 @@
+- name: Amazon Linux based Apache2.4 AMI
+  hosts: all
+  vars:
+    root_dir: /ap-service
+    sub_dir: ["logs", "conf"]
+    middleware: ["apache", "nginx","tomcat"] # apache2.4 : apache, nginx1.18 : nginx, tomcat8.5-9.0 : tomcat
+    web_service_name: ["demo1", "demo2"]
+  roles:
+   - apache2.4
+   - nginx1.18
+   - tomcat8.5
+   - tomcat9.0
+   - jdk8
+   - jdk11
+   - nodejs12
+   - nodejs14
+   - nodejs15
+   - python3
+   - sqlite3
+   - git
+   - common
+  pre_tasks:
+    - name: Create Base Directory
+      file:
+        path: "{{ root_dir }}/{{ item[0] }}/{{ item[1] }}"
+        state: directory
+      with_nested:
+        - "{{ sub_dir }}"
+        - "{{ middleware }}"
+      become: yes
+    - name: Create appBase Directory (Tomcat)
+      file:
+        path: "{{ root_dir }}/app/tomcat"
+        state: directory
+      become: yes
+      when: "'tomcat' in middleware"
+    - name: Create appBase Directory (Apache)
+      file:
+        path: "{{ root_dir }}/app/apache/{{ item }}"
+        state: directory
+      with_items:
+        - "{{ web_service_name }}"
+      become: yes
+      when: "'apache' in middleware"
+    - name: Create appBase Directory (Nginx)
+      file:
+        path: "{{ root_dir }}/app/nginx/{{ item }}"
+        state: directory
+      with_items:
+        - "{{ web_service_name }}"
+      become: yes
+      when: "'nginx' in middleware"

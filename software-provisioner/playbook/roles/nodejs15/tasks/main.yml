@@ -1,0 +1,4 @@
+    - name: Add the NodeSource package
+      shell: "curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.37.2/install.sh | bash"
+    - name: "Install Nodejs 15.5.1" 
+      shell: ". ~/.nvm/nvm.sh && nvm install 15.5.1"

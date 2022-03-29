@@ -1,0 +1,21 @@
+- name: Amazon Linux based Nginx1.18, Python3 & SQLite3 AMI
+  hosts: all
+  vars:
+    root_dir: /ap-service
+    sub_dir: ["logs", "conf", "app"]
+    middleware: ["nginx"]
+  pre_tasks:
+    - name: Create Base Directory
+      file:
+        path: "{{ root_dir }}/{{ item[0] }}/{{ item[1] }}"
+        state: directory
+      with_nested:
+        - "{{ sub_dir }}"
+        - "{{ middleware }}"
+      become: yes
+  roles:
+   - nginx1.18
+   - python3
+   - sqlite3
+   - git
+   - common

@@ -1,0 +1,19 @@
+    - name: Copy Tomcat9.0 Install file
+      copy: 
+        src: ../../../sh/tomcat9.0_install.sh
+        dest: /tmp/tomcat9.0_install.sh
+        mode: 0744
+    - name: Tomcat9.0 Install
+      command: sh /tmp/tomcat9.0_install.sh
+    - name: Copy Tomcat9.0 config file - catalina.sh
+      copy: 
+        src: ../tomcat-conf/catalina.sh
+        dest: /ap-service/tomcat/bin/catalina.sh
+      become: yes
+    - name: Copy Tomcat config file
+      copy: 
+        src: tomcat-conf/{{ item }}
+        dest: /ap-service/tomcat/conf
+      with_items:
+        - "{{ tomcat_copy_file_list }}"
+      become: yes

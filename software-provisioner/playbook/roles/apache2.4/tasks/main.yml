@@ -1,0 +1,12 @@
+  - name: Copy Apache2.4 Install file
+    copy: 
+      src: ../../../sh/apache2.4_install.sh
+      dest: /tmp/apache2.4_install.sh
+      mode: 0744
+  - name: Apache2.4 Install
+    command: sh /tmp/apache2.4_install.sh
+  - name: Copy Apache configuration file
+    copy: 
+      src: ../apache-conf/httpd.conf
+      dest: /ap-service/conf/apache/httpd.conf
+    become: yes

@@ -1,0 +1,7 @@
+    - name: AP Security Shell
+      copy: 
+        src: ../../../sh/ap_security_setting.sh
+        dest: /tmp/ap_security_setting.sh
+        mode: 0744
+    - name: AP Security Setting
+      command: sh /tmp/ap_security_setting.sh

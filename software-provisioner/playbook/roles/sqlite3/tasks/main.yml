@@ -1,0 +1,7 @@
+    - name: Copy SQLite Install file
+      copy: 
+        src: ../../../sh/sqlite3_install.sh
+        dest: /tmp/sqlite3_install.sh
+        mode: 0744
+    - name: SQLite Install
+      command: sh /tmp/sqlite3_install.sh

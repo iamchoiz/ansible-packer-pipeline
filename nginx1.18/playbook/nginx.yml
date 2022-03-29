@@ -1,0 +1,34 @@
+---
+- hosts: all
+  vars:
+    root_dir: /ap-service
+    sub_dir: ["logs", "conf", "app"]
+    middleware: ["nginx"]
+  tasks:
+    - name: Create Base Directory
+      file:
+        path: "{{ root_dir }}/{{ item[0] }}/{{ item[1] }}"
+        state: directory
+      with_nested:
+        - "{{ sub_dir }}"
+        - "{{ middleware }}"
+      become: yes
+    - name: Copy Nginx Install file
+      copy: 
+        src: ../sh/nginx_install.sh
+        dest: /tmp/nginx_install.sh
+        mode: 0744
+    - name: NGINX Install
+      command: sh /tmp/nginx_install.sh     
+    - name: Copy Nginx configuration file
+      copy: 
+        src: nginx-conf/nginx.conf
+        dest: /ap-service/conf/nginx/nginx.conf
+      become: yes
+    - name: AP Security Shell
+      copy: 
+        src: ../sh/ap_security.sh
+        dest: /tmp/ap_security.sh
+        mode: 0744
+    - name: AP Security Setting
+      command: sh /tmp/ap_security.sh

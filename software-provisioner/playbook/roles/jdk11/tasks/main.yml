@@ -1,0 +1,8 @@
+    - name: Install JAVA11
+      yum:
+        name:
+          - amazon-linux-extras
+      become: yes
+    - name: Install OpenJDK11 via amazon-linux-extras packages
+      shell: "amazon-linux-extras install java-openjdk11 -y"
+      become: yes

@@ -1,0 +1,49 @@
+---
+- hosts: all
+  vars:
+    root_dir: /ap-service
+    sub_dir: ["logs", "conf", "app"]
+    middleware: ["apache", "tomcat"]
+    apache_conf_path: /ap-service/conf/apache
+    tomcat_conf_path: /ap-service/tomcat/conf
+    tomcat_bin_path: /ap-service/tomcat/bin
+    apache_copy_file_list : ["httpd.conf"]
+    tomcat_copy_file_list : ["server.xml"]
+  tasks:
+    - name: Create Base Directory
+      file:
+        path: "{{ root_dir }}/{{ item[0] }}/{{ item[1] }}"
+        state: directory
+      with_nested:
+        - "{{ sub_dir }}"
+        - "{{ middleware }}"
+      become: yes
+    - name: Copy Apache & Tomcat Install file
+      copy: src=../sh/apache_tomcat_install.sh dest=/tmp/apache_tomcat_install.sh mode=0744
+    - name: Apache & Tomcat Install
+      command: sh /tmp/apache_tomcat_install.sh
+
+    - name: Copy Apache configuration file
+      copy: src=apache-conf/{{ item }} dest={{ apache_conf_path }}
+      with_items:
+        - "{{ apache_copy_file_list }}"
+      become: yes
+
+    - name: Copy Tomcat config file
+      copy: src=tomcat-conf/{{ item }} dest={{ tomcat_conf_path }}
+      with_items:
+        - "{{ tomcat_copy_file_list }}"
+      become: yes
+
+    - name: Copy Tomcat config file - catalina.sh
+      copy: src=tomcat-conf/catalina.sh dest={{ tomcat_bin_path }}
+      become: yes
+
+    - name: Application Deployment
+      copy: src=demo-app dest=/ap-service/app/tomcat
+      become: yes
+
+    - name: AP Security Shell
+      copy: src=../sh/ap_security.sh dest=/tmp/ap_security.sh mode=0744
+    - name: AP Security Setting
+      command: sh /tmp/ap_security.sh

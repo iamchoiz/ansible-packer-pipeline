@@ -1,0 +1,33 @@
+---
+- hosts: all
+  vars:
+    web : "apache2"
+    service_name : "demo-service"
+    dir_path: [
+      "/ap-service/app/{{ web }}/{{ service_name }}",
+      "/ap-service/logs/{{ web }}",
+      "/ap-service/conf/{{ web }}"
+      ]
+  tasks:
+    - name: Create Base Directory
+      file:
+        path: "{{ item }}"
+        state: directory
+      with_items:
+        - "{{ dir_path }}"
+      become: yes
+    - name: Copy Apache2.4 Install file
+      copy: 
+        src: ../sh/apache2.4_install.sh
+        dest: /home/ec2-user/apache2.4_install.sh
+        mode: 0744
+    - name: Apache Web Server Install
+      command: sh /home/ec2-user/apache2.4_install.sh
+    - name: Copy Apache configuration file
+      copy: 
+        src: apache-conf/apache-sample.conf
+        dest: /ap-service/conf/apache2/httpd.conf
+        owner: root
+        group: root
+        mode: 0644
+      become: yes

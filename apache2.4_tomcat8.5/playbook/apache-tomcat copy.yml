@@ -1,0 +1,30 @@
+---
+- hosts: localhost
+  vars:
+    root_dir: /ap-service
+    sub_dir: ["logs", "conf", "app"]
+    middleware: ["apache", "tomcat"]
+    apache_conf_path: /ap-service/conf/apache
+    tomcat_conf_path: /ap-service/tomcat/conf
+    tomcat_bin_path: /ap-service/tomcat/bin
+  tasks:
+    - name: Create Base Directory
+      file:
+        path: "{{ root_dir }}/{{ item[0] }}/{{ item[1] }}"
+        state: directory
+      with_nested:
+        - "{{ sub_dir }}"
+        - "{{ middleware }}"
+      become: yes
+    - name: Copy Apache configuration file
+      copy: src=apache-conf dest={{ apache_conf_path }} remote_src=true
+      become: yes
+
+    - name: Copy Tomcat config file
+      copy: src=tomcat-conf dest={{ tomcat_conf_path }} remote_src=true
+      become: yes
+
+    - name: AP Security Shell
+      copy: src=../sh/ap_security.sh dest=/tmp/ap_security.sh mode=0744
+    - name: AP Security Setting
+      command: sh /tmp/ap_security.sh
